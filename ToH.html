@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Towers of Hanoi - University of Huddersfield</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #F5F5F7;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1D1D1F;
+            margin-bottom: 20px;
+        }
+
+        .control-panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .disk-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            width: 70px;
+            height: 25px;
+            border: 1px solid #CCCCCC;
+            border-radius: 6px;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            min-width: 80px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0066CC;
+        }
+
+        button:disabled {
+            background-color: #B4B4B4;
+            cursor: not-allowed;
+        }
+
+        #resetBtn {
+            background-color: #FF3B30;
+        }
+
+        #resetBtn:hover {
+            background-color: #FF2D55;
+        }
+
+        .move-counter {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1D1D1F;
+            margin: 10px 0;
+        }
+
+        .game-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .copyright {
+            color: #86868B;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">University of Huddersfield</div>
+    
+    <div class="control-panel">
+        <div class="disk-selector">
+            <label for="diskCount">Number of Disks:</label>
+            <input type="number" id="diskCount" min="1" max="15" value="3">
+        </div>
+        <button id="startBtn">Start</button>
+        <button id="resetBtn">Reset</button>
+    </div>
+
+    <div class="move-counter">Moves: 0</div>
+    
+    <div class="game-container">
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
+    </div>
+
+    <div class="copyright">Copyright Duke Gledhill 2025</div>
+
+    <script>
+        class TowersOfHanoi {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.diskCount = 3;
+                this.towers = [[], [], []];
+                this.moves = [];
+                this.currentMove = 0;
+                this.isAnimating = false;
+                this.animationSpeed = 15;
+                this.moveCounter = 0;
+                this.diskColors = {};
+                
+                // Animation state
+                this.movingDisk = null;
+                this.movingDiskPos = { x: 0, y: 0 };
+                this.animationStep = 0;
+                this.sourceX = 0;
+                this.targetX = 0;
+                this.sourceY = 0;
+                this.targetY = 0;
+                
+                this.polePositions = [200, 400, 600];
+                
+                // Initialize controls
+                this.startBtn = document.getElementById('startBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.diskCountInput = document.getElementById('diskCount');
+                this.moveCounterDisplay = document.querySelector('.move-counter');
+                
+                this.setupEventListeners();
+                this.initializeTowers();
+            }
+
+            setupEventListeners() {
+                this.startBtn.addEventListener('click', () => this.startAnimation());
+                this.resetBtn.addEventListener('click', () => this.resetTowers());
+                this.diskCountInput.addEventListener('change', () => {
+                    this.diskCount = parseInt(this.diskCountInput.value);
+                    this.initializeTowers();
+                });
+            }
+
+            generateRandomColor() {
+                const colors = [
+                    "#FF3B30", "#FF9500", "#FFCC00", "#4CD964", "#5856D6", "#007AFF",
+                    "#5AC8FA", "#AF52DE", "#FF2D55", "#E35C3B", "#30B0C7", "#2ED157",
+                    "#64D2FF", "#FF375F", "#FFD60A", "#BF5AF2"
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            initializeTowers() {
+                this.towers = [Array.from({length: this.diskCount}, (_, i) => this.diskCount - i), [], []];
+                this.moves = [];
+                this.currentMove = 0;
+                this.moveCounter = 0;
+                this.moveCounterDisplay.textContent = `Moves: 0`;
+                this.isAnimating = false;
+                this.movingDisk = null;
+                
+                // Initialize disk colors
+                this.diskColors = {};
+                for (let i = 1; i <= this.diskCount; i++) {
+                    this.diskColors[i] = this.generateRandomColor();
+                }
+                
+                this.startBtn.disabled = false;
+                this.draw();
+            }
+
+            resetTowers() {
+                this.isAnimating = false;
+                this.initializeTowers();
+            }
+
+            solveHanoi(n, source, target, auxiliary) {
+                if (n > 0) {
+                    this.solveHanoi(n - 1, source, auxiliary, target);
+                    this.moves.push([source, target]);
+                    this.solveHanoi(n - 1, auxiliary, target, source);
+                }
+            }
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw base
+                const baseGradient = this.ctx.createLinearGradient(50, 345, 750, 345);
+                baseGradient.addColorStop(0, "#2C2C2E");
+                baseGradient.addColorStop(1, "#3A3A3C");
+                this.ctx.fillStyle = baseGradient;
+                this.ctx.fillRect(50, 345, 700, 20);
+                
+                // Draw poles
+                for (const x of this.polePositions) {
+                    this.ctx.fillStyle = "#8B4513";
+                    this.ctx.fillRect(x - 5, 100, 10, 250);
+                }
+                
+                // Draw stationary disks
+                this.towers.forEach((tower, towerIdx) => {
+                    tower.forEach((diskSize, height) => {
+                        if (diskSize !== this.movingDisk) {
+                            this.drawDisk(
+                                this.polePositions[towerIdx],
+                                340 - height * 20,
+                                diskSize
+                            );
+                        }
+                    });
+                });
+                
+                // Draw moving disk
+                if (this.movingDisk !== null) {
+                    this.drawDisk(
+                        this.movingDiskPos.x,
+                        this.movingDiskPos.y,
+                        this.movingDisk
+                    );
+                }
+            }
+
+            drawDisk(x, y, size) {
+                const width = size * 20;
+                this.ctx.fillStyle = this.diskColors[size];
+                this.ctx.beginPath();
+                this.ctx.roundRect(x - width/2, y, width, 15, 7);
+                this.ctx.fill();
+            }
+
+            async animateDiskMovement() {
+                if (!this.isAnimating || this.movingDisk === null) return;
+
+                const TOTAL_STEPS = 10;
+                
+                if (this.animationStep < TOTAL_STEPS) {
+                    // Moving up
+                    const progress = this.animationStep / TOTAL_STEPS;
+                    this.movingDiskPos.y = this.sourceY - (progress * 240);
+                } else if (this.animationStep < TOTAL_STEPS * 2) {
+                    // Moving sideways
+                    const progress = (this.animationStep - TOTAL_STEPS) / TOTAL_STEPS;
+                    this.movingDiskPos.x = this.sourceX + (this.targetX - this.sourceX) * progress;
+                } else if (this.animationStep < TOTAL_STEPS * 3) {
+                    // Moving down
+                    const progress = (this.animationStep - TOTAL_STEPS * 2) / TOTAL_STEPS;
+                    this.movingDiskPos.y = 100 + (this.targetY - 100) * progress;
+                } else {
+                    // Complete move
+                    this.towers[this.currentTarget].push(this.movingDisk);
+                    this.movingDisk = null;
+                    this.currentMove++;
+                    this.moveCounter++;
+                    this.moveCounterDisplay.textContent = `Moves: ${this.moveCounter}`;
+                    
+                    if (this.currentMove >= this.moves.length) {
+                        this.isAnimating = false;
+                        this.startBtn.disabled = false;
+                    } else {
+                        this.startDiskMovement();
+                    }
+                    
+                    this.draw();
+                    return;
+                }
+                
+                this.animationStep++;
+                this.draw();
+                setTimeout(() => this.animateDiskMovement(), this.animationSpeed);
+            }
+
+            startDiskMovement() {
+                if (this.currentMove >= this.moves.length) return;
+
+                const [sourceIdx, targetIdx] = this.moves[this.currentMove];
+                this.currentSource = sourceIdx;
+                this.currentTarget = targetIdx;
+                
+                this.movingDisk = this.towers[sourceIdx].pop();
+                
+                const sourceHeight = this.towers[sourceIdx].length;
+                const targetHeight = this.towers[targetIdx].length;
+                
+                this.sourceX = this.polePositions[sourceIdx];
+                this.sourceY = 340 - sourceHeight * 20;
+                this.targetX = this.polePositions[targetIdx];
+                this.targetY = 340 - targetHeight * 20;
+                
+                this.movingDiskPos = { x: this.sourceX, y: this.sourceY };
+                this.animationStep = 0;
+                
+                this.animateDiskMovement();
+            }
+
+            startAnimation() {
+                if (this.isAnimating) return;
+                
+                // Save colors
+                const savedColors = {...this.diskColors};
+                
+                // Reset state
+                this.towers = [Array.from({length: this.diskCount}, (_, i) => this.diskCount - i), [], []];
+                this.moves = [];
+                this.currentMove = 0;
+                this.isAnimating = false;
+                this.movingDisk = null;
+                this.movingDiskPos = { x: 0, y: 0 };
+                this.animationStep = 0;
+                this.moveCounter = 0;
+                this.moveCounterDisplay.textContent = `Moves: 0`;
+                
+                // Restore colors
+                this.diskColors = savedColors;
+                
+                this.isAnimating = true;
+                this.startBtn.disabled = true;
+                
+                // Generate moves
+                this.solveHanoi(this.diskCount, 0, 2, 1);
+                
+                this.startDiskMovement();
+            }
+        }
+
+        // Start the game when the page loads
+        window.onload = () => {
+            new TowersOfHanoi();
+        };
+    </script>
+</body>
+</html>
