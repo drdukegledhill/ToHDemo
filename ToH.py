@@ -63,7 +63,7 @@ class TowerWidget(QWidget):
         """Draw a disk with its assigned colors"""
         # Draw disk shadow
         shadow_color = QColor(0, 0, 0, 30)
-        painter.fillRect(x - width//2 + 2, y + 2, width, 15, shadow_color)
+        painter.fillRect(int(x - width//2 + 2), int(y + 2), int(width), 15, shadow_color)
         
         # Get or generate colors for this disk
         if disk_size not in self.disk_colors:
@@ -82,7 +82,7 @@ class TowerWidget(QWidget):
         # Draw disk with rounded corners
         painter.setPen(Qt.NoPen)
         painter.setBrush(disk_gradient)
-        painter.drawRoundedRect(x - width//2, y, width, 15, 7, 7)
+        painter.drawRoundedRect(int(x - width//2), int(y), int(width), 15, 7, 7)
 
     def get_disk_position(self, tower_idx, height):
         """Calculate the x, y position for a disk"""
@@ -98,10 +98,10 @@ class TowerWidget(QWidget):
         base_gradient = QLinearGradient(50, 345, 750, 345)
         base_gradient.setColorAt(0, QColor("#2C2C2E"))
         base_gradient.setColorAt(1, QColor("#3A3A3C"))
-        painter.fillRect(50, 345, 700, 20, base_gradient)
+        painter.fillRect(50, 355, 700, 20, base_gradient)
         
         # Draw poles with gradient
-        pole_gradient = QLinearGradient(0, 100, 0, 350)
+        pole_gradient = QLinearGradient(0, 100, 0, 355)
         pole_gradient.setColorAt(0, QColor("#8B4513"))
         pole_gradient.setColorAt(1, QColor("#654321"))
         
