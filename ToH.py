@@ -259,7 +259,7 @@ class TowersOfHanoi(QMainWindow):
         layout.addWidget(self.tower_widget)
 
         # Add copyright with modern styling
-        copyright_label = QLabel("Copyright Duke Gledhill 2025")
+        copyright_label = QLabel("Copyright 2025 Dr Duke Gledhill - version 2025.04.22")
         copyright_label.setAlignment(Qt.AlignCenter)
         copyright_label.setFont(QFont('SF Pro Text', 12))
         copyright_label.setStyleSheet("color: #86868B;")
