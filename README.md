@@ -1,42 +1,8 @@
 # Towers of Hanoi Demo
 
 Interactive Towers of Hanoi implementations in two flavors:
-- Web app: `docs/index.html` (browser-based Canvas animation)
-- Desktop app: `ToH.py` (PyQt5)
-
-## Play Live
-
-Play the live web demo here:
-
-`https://drduke.uk/ToHDemo`
-
-## Versions
-
-This project includes both a web version and a Python desktop version.
-
-### Web version (`docs/index.html`)
-- Runs in a modern browser
-- No installation required
-- Ideal for quick demos and sharing
-
-### Python version (`ToH.py`)
-- Built with PyQt5
-- Native desktop UI and animation
-- Useful for local/offline use and Python-based teaching sessions
-
-## Quick Start
-
-### Web version
-Open `docs/index.html` locally, or use the live site: `https://drduke.uk/ToHDemo`.
-
-### Python version
-Install dependencies and run:
-
-```bash
-python -m pip install --upgrade pip
-python -m pip install PyQt5
-python ToH.py
-```
+- Web app: [`docs/index.html`](docs/index.html) (browser-based Canvas animation)
+- Desktop app: [`ToH.py`](ToH.py) (PyQt5)
 
 ## Features
 
@@ -70,6 +36,50 @@ hanoi(n, source, target, auxiliary):
 
 Minimum number of moves for `n` disks: `2^n - 1`.
 
+## Play Live
+
+Play the live web demo here:
+
+[https://drduke.uk/ToHDemo](https://drduke.uk/ToHDemo)
+
+## Versions
+
+This project includes both a web version and a Python desktop version.
+
+### Web version (`docs/index.html`)
+- Runs in a modern browser
+- No installation required
+- Ideal for quick demos and sharing
+
+### Python version (`ToH.py`)
+- Built with PyQt5
+- Native desktop UI and animation
+- Useful for local/offline use and Python-based teaching sessions
+
+## Quick Start
+
+### Web version
+Open [`docs/index.html`](docs/index.html) locally, or use the live site: [https://drduke.uk/ToHDemo](https://drduke.uk/ToHDemo).
+
+### Python version
+Install dependencies and run using either `python` or `python3`.
+
+Using `python`:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install PyQt5
+python ToH.py
+```
+
+Using `python3`:
+
+```bash
+python3 -m pip install --upgrade pip
+python3 -m pip install PyQt5
+python3 ToH.py
+```
+
 ## Notes
 
 - If `PyQt5` is missing, install it in the same Python environment used to run `ToH.py`.
@@ -79,7 +89,7 @@ Minimum number of moves for `n` disks: `2^n - 1`.
 
 This project is licensed for educational use.
 
-Full license text is available in `LICENSE`.
+Full license text is available in [`LICENSE`](LICENSE).
 
 You may use, copy, and adapt this project for:
 - Classroom teaching
