@@ -1,8 +1,8 @@
 # Towers of Hanoi Demo
 
 Interactive Towers of Hanoi implementations in two flavors:
-- Web app: [`docs/index.html`](docs/index.html) (browser-based Canvas animation)
-- Desktop app: [`ToH.py`](ToH.py) (PyQt5)
+- Web app: [https://drduke.uk/ToHDemo](https://drduke.uk/ToHDemo) or docs/index.html (browser-based Canvas animation)
+- Desktop app: ToH.py (PyQt5)
 
 ## Features
 
@@ -36,17 +36,8 @@ hanoi(n, source, target, auxiliary):
 
 Minimum number of moves for `n` disks: `2^n - 1`.
 
-## Play Live
 
-Play the live web demo here:
-
-[https://drduke.uk/ToHDemo](https://drduke.uk/ToHDemo)
-
-## Versions
-
-This project includes both a web version and a Python desktop version.
-
-### Web version (`docs/index.html`)
+### Web version ([https://drduke.uk/ToHDemo](https://drduke.uk/ToHDemo) or `docs/index.html`)
 - Runs in a modern browser
 - No installation required
 - Ideal for quick demos and sharing
@@ -59,7 +50,7 @@ This project includes both a web version and a Python desktop version.
 ## Quick Start
 
 ### Web version
-Open [`docs/index.html`](docs/index.html) locally, or use the live site: [https://drduke.uk/ToHDemo](https://drduke.uk/ToHDemo).
+Open [https://drduke.uk/ToHDemo](https://drduke.uk/ToHDemo) or [`docs/index.html`](docs/index.html) locally
 
 ### Python version
 Install dependencies and run using either `python` or `python3`.
