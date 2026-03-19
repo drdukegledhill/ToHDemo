@@ -95,4 +95,4 @@ Attribution to the original author must be retained in derivative educational ma
 
 ## Copyright
 
-Copyright Duke Gledhill 2025
+Copyright Duke Gledhill 2026
